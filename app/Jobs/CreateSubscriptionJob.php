@@ -33,7 +33,6 @@ class CreateSubscriptionJob implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('inside job');
         // Create or get customer
         if (!$this->user->hasStripeId()) {
             $this->user->createAsStripeCustomer();

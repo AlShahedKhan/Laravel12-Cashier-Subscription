@@ -19,7 +19,7 @@ class SubscriptionController extends Controller
     public function createSubscription(Request $request): JsonResponse
     {
         $request->validate([
-            'price_id' => 'required|string|in:basic_monthly,basic_yearly,premium_monthly,premium_yearly',
+            'price_id' => 'required|string|in:basic_monthly,basic_yearly,    premium_monthly,premium_yearly',
             'payment_method' => 'required|string',
         ]);
 

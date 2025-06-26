@@ -27,7 +27,7 @@ class SubscriptionController extends Controller
         $priceId = self::PRICE_IDS[$request->price_id];
 
         try {
-            $result = dispatch_sync(new CreateSubscriptionJob($user, $priceId, $request->payment_method));
+            $result = dispatch(new CreateSubscriptionJob($user, $priceId, $request->payment_method));
 
             return response()->json([
                 'success' => true,

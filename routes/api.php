@@ -26,4 +26,6 @@ Route::middleware('jwt')->group(function () {
 
     Route::get('/prices', [SubscriptionController::class, 'getPrices']);
     Route::post('/subscription/pause', [SubscriptionController::class, 'pauseSubscription']);
+
+    Route::get('/stripe/connect/create', [StripeConnectController::class, 'createAccountLink'])->name('stripe.connect.create');
 });

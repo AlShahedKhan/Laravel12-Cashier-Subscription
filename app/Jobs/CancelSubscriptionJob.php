@@ -1,38 +1,33 @@
 <?php
 
+// Job without ShouldQueue
 namespace App\Jobs;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class CancelSubscriptionJob implements ShouldQueue
+class CancelSubscriptionJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $user;
+    protected $userId;
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct(User $user)
+    public function __construct($userId)
     {
-        $this->user = $user;
+        $this->userId = $userId;
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle()
     {
-        if (!$this->user->isSubscribed()) {
+        $user = \App\Models\User::find($this->userId);
+        if (!$user || !$user->isSubscribed()) {
             throw new \Exception('User is not subscribed');
         }
 
-        $subscription = $this->user->subscription('default');
+        $subscription = $user->subscription('default');
         $subscription->cancel();
 
         return [
@@ -40,3 +35,5 @@ class CancelSubscriptionJob implements ShouldQueue
         ];
     }
 }
+
+

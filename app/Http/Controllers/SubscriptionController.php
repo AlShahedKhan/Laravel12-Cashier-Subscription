@@ -7,6 +7,8 @@ use Illuminate\Http\JsonResponse;
 use App\Jobs\CreateSubscriptionJob;
 use App\Jobs\UpdateSubscriptionJob;
 use App\Jobs\CancelSubscriptionJob;
+use App\Jobs\ResumeSubscriptionJob;
+use Illuminate\Support\Facades\Log;
 
 
 class SubscriptionController extends Controller
@@ -29,7 +31,7 @@ class SubscriptionController extends Controller
         $priceId = self::PRICE_IDS[$request->price_id];
 
         try {
-            $result = dispatch(new CreateSubscriptionJob($user, $priceId, $request->payment_method));
+            $result = dispatch_sync(new CreateSubscriptionJob($user, $priceId, $request->payment_method));
 
             return response()->json([
                 'success' => true,
@@ -53,7 +55,7 @@ class SubscriptionController extends Controller
         $priceId = self::PRICE_IDS[$request->price_id];
 
         try {
-            $result = dispatch(new UpdateSubscriptionJob($user, $priceId));
+            $result = dispatch_sync(new UpdateSubscriptionJob($user, $priceId));
 
             return response()->json([
                 'success' => true,
@@ -67,12 +69,14 @@ class SubscriptionController extends Controller
             ], 400);
         }
     }
+    // Controller method
     public function cancelSubscription(Request $request): JsonResponse
     {
         $user = $request->user();
 
         try {
-            $result = dispatch(new CancelSubscriptionJob($user));
+            // Using dispatchSync with non-queued job
+            $result = CancelSubscriptionJob::dispatchSync($user->id);
 
             return response()->json([
                 'success' => true,
@@ -83,6 +87,25 @@ class SubscriptionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
+            ], 400);
+        }
+    }
+    public function resumeSubscription(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        try {
+            $result = dispatch(new ResumeSubscriptionJob($user));
+
+            return response()->json([
+                'success' => true,
+                'message' => $result['message'],
+                'subscription' => $result['subscription'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Resume failed: ' . $e->getMessage(),
             ], 400);
         }
     }

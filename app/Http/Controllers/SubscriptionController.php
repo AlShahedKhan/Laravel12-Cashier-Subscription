@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Jobs\CreateSubscriptionJob;
 use App\Jobs\UpdateSubscriptionJob;
+use App\Jobs\CancelSubscriptionJob;
 
 
 class SubscriptionController extends Controller
@@ -58,6 +59,25 @@ class SubscriptionController extends Controller
                 'success' => true,
                 'message' => 'Subscription updated successfully',
                 'subscription' => $result,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+    }
+    public function cancelSubscription(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        try {
+            $result = dispatch(new CancelSubscriptionJob($user));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Subscription cancelled successfully',
+                'ends_at' => $result['ends_at'],
             ]);
         } catch (\Exception $e) {
             return response()->json([

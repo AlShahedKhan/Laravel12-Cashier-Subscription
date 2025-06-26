@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Jobs\CreateSubscriptionJob;
+use App\Jobs\UpdateSubscriptionJob;
 
 
 class SubscriptionController extends Controller
@@ -31,6 +32,31 @@ class SubscriptionController extends Controller
 
             return response()->json([
                 'success' => true,
+                'subscription' => $result,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+    }
+
+    public function updateSubscription(Request $request): JsonResponse
+    {
+        $request->validate([
+            'price_id' => 'required|string|in:basic_monthly,basic_yearly,premium_monthly,premium_yearly',
+        ]);
+
+        $user = $request->user();
+        $priceId = self::PRICE_IDS[$request->price_id];
+
+        try {
+            $result = dispatch(new UpdateSubscriptionJob($user, $priceId));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Subscription updated successfully',
                 'subscription' => $result,
             ]);
         } catch (\Exception $e) {

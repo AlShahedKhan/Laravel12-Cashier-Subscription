@@ -200,4 +200,43 @@ class SubscriptionController extends Controller
             ],
         ]);
     }
+
+    public function pauseSubscription(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!$user->isSubscribed()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User is not subscribed',
+            ], 400);
+        }
+
+        try {
+            $subscription = $user->subscription('default');
+
+            // Check if subscription is already cancelled/paused
+            if ($subscription->ended()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Subscription is already cancelled',
+                ], 400);
+            }
+
+            // Cancel the subscription (this will pause it at the end of the current period)
+            $subscription->cancel();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Subscription paused successfully. It will remain active until the end of the current billing period.',
+                'ends_at' => $subscription->ends_at->toISOString(),
+                'on_grace_period' => $subscription->onGracePeriod(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+    }
 }

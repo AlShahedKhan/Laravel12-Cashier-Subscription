@@ -25,4 +25,5 @@ Route::middleware('jwt')->group(function () {
     Route::get('/payment-methods', [SubscriptionController::class, 'getPaymentMethods']);
 
     Route::get('/prices', [SubscriptionController::class, 'getPrices']);
+    Route::post('/subscription/pause', [SubscriptionController::class, 'pauseSubscription']);
 });

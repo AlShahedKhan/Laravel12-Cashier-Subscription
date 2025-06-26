@@ -95,7 +95,8 @@ class SubscriptionController extends Controller
         $user = $request->user();
 
         try {
-            $result = dispatch(new ResumeSubscriptionJob($user));
+            // Use dispatchSync with non-queued job
+            $result = ResumeSubscriptionJob::dispatchSync($user);
 
             return response()->json([
                 'success' => true,

@@ -164,4 +164,40 @@ class SubscriptionController extends Controller
             'default_payment_method' => $user->defaultPaymentMethod()?->id,
         ]);
     }
+
+    public function getPrices(): JsonResponse
+    {
+        return response()->json([
+            'prices' => [
+                'basic_monthly' => [
+                    'id' => 'basic_monthly',
+                    'stripe_id' => self::PRICE_IDS['basic_monthly'],
+                    'name' => 'Basic Monthly',
+                    'interval' => 'month',
+                    'tier' => 'basic',
+                ],
+                'basic_yearly' => [
+                    'id' => 'basic_yearly',
+                    'stripe_id' => self::PRICE_IDS['basic_yearly'],
+                    'name' => 'Basic Yearly',
+                    'interval' => 'year',
+                    'tier' => 'basic',
+                ],
+                'premium_monthly' => [
+                    'id' => 'premium_monthly',
+                    'stripe_id' => self::PRICE_IDS['premium_monthly'],
+                    'name' => 'Premium Monthly',
+                    'interval' => 'month',
+                    'tier' => 'premium',
+                ],
+                'premium_yearly' => [
+                    'id' => 'premium_yearly',
+                    'stripe_id' => self::PRICE_IDS['premium_yearly'],
+                    'name' => 'Premium Yearly',
+                    'interval' => 'year',
+                    'tier' => 'premium',
+                ],
+            ],
+        ]);
+    }
 }

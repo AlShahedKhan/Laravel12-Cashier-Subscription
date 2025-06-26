@@ -21,4 +21,6 @@ Route::middleware('jwt')->group(function () {
     Route::put('/subscription/update', [SubscriptionController::class, 'updateSubscription']);
     Route::post('/subscription/cancel', [SubscriptionController::class, 'cancelSubscription']);
     Route::post('/subscription/resume', [SubscriptionController::class, 'resumeSubscription']);
+
+    Route::get('/payment-methods', [SubscriptionController::class, 'getPaymentMethods']);
 });

@@ -75,7 +75,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->subscribed('default', ['price_1Ra9ynDgYV6zJ17v2HMSLJpe', 'price_1Ra9zADgYV6zJ17v7B4zNE1r']);
     }
-    
+
     public function getSubscriptionTier()
     {
         if (!$this->isSubscribed()) {

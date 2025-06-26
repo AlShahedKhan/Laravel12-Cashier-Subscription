@@ -111,7 +111,7 @@ class SubscriptionController extends Controller
         }
     }
 
-     public function getSubscriptionDetails(Request $request): JsonResponse
+    public function getSubscriptionDetails(Request $request): JsonResponse
     {
         $user = $request->user();
 
@@ -135,6 +135,33 @@ class SubscriptionController extends Controller
                 'cancelled' => $subscription->ended(),
                 'on_grace_period' => $subscription->onGracePeriod(),
             ],
+        ]);
+    }
+
+    public function getPaymentMethods(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!$user->hasStripeId()) {
+            return response()->json(['payment_methods' => []]);
+        }
+
+        $paymentMethods = $user->paymentMethods()->map(function ($paymentMethod) {
+            return [
+                'id' => $paymentMethod->id,
+                'type' => $paymentMethod->type,
+                'card' => $paymentMethod->card ? [
+                    'brand' => $paymentMethod->card->brand,
+                    'last4' => $paymentMethod->card->last4,
+                    'exp_month' => $paymentMethod->card->exp_month,
+                    'exp_year' => $paymentMethod->card->exp_year,
+                ] : null,
+            ];
+        });
+
+        return response()->json([
+            'payment_methods' => $paymentMethods,
+            'default_payment_method' => $user->defaultPaymentMethod()?->id,
         ]);
     }
 }

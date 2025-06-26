@@ -3,10 +3,12 @@
 namespace App\Jobs;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Bus\Queueable;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 
 class ResumeSubscriptionJob // Removed ShouldQueue interface
 {
@@ -66,4 +68,6 @@ class ResumeSubscriptionJob // Removed ShouldQueue interface
             ],
         ];
     }
+
+
 }

@@ -110,4 +110,31 @@ class SubscriptionController extends Controller
             ], 400);
         }
     }
+
+     public function getSubscriptionDetails(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!$user->isSubscribed()) {
+            return response()->json([
+                'subscribed' => false,
+                'tier' => 'none',
+            ]);
+        }
+
+        $subscription = $user->subscription('default');
+
+        return response()->json([
+            'subscribed' => true,
+            'tier' => $user->getSubscriptionTier(),
+            'subscription' => [
+                'id' => $subscription->stripe_id,
+                'status' => $subscription->stripe_status,
+                'current_period_start' => $subscription->created_at,
+                'current_period_end' => $subscription->ends_at,
+                'cancelled' => $subscription->ended(),
+                'on_grace_period' => $subscription->onGracePeriod(),
+            ],
+        ]);
+    }
 }

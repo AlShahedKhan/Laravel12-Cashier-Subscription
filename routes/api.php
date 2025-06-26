@@ -16,8 +16,9 @@ Route::middleware('jwt')->group(function () {
     Route::put('/user', [AuthController::class, 'updateUser']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/subscription', [SubscriptionController::class, 'getSubscriptionDetails']);
     Route::post('/subscription/create', [SubscriptionController::class, 'createSubscription']);
     Route::put('/subscription/update', [SubscriptionController::class, 'updateSubscription']);
-     Route::post('/subscription/cancel', [SubscriptionController::class, 'cancelSubscription']);
+    Route::post('/subscription/cancel', [SubscriptionController::class, 'cancelSubscription']);
     Route::post('/subscription/resume', [SubscriptionController::class, 'resumeSubscription']);
 });

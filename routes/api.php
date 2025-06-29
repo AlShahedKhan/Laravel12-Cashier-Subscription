@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\StripeConnectController;
 
 Route::get('/', function () {
     return response()->json(['message' => 'Hello world!']);
@@ -28,4 +29,7 @@ Route::middleware('jwt')->group(function () {
     Route::post('/subscription/pause', [SubscriptionController::class, 'pauseSubscription']);
 
     Route::get('/stripe/connect/create', [StripeConnectController::class, 'createAccountLink'])->name('stripe.connect.create');
+
+    Route::get('/stripe/connect/return', [StripeConnectController::class, 'handleReturn'])->name('stripe.connect.return');
+    Route::get('/stripe/connect/refresh', [StripeConnectController::class, 'handleRefresh'])->name('stripe.connect.refresh');
 });
